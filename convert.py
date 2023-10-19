@@ -1,5 +1,5 @@
 import os
-import PyPDF2
+from PyPDF2 import PdfReader
 from docx import Document
 
 def pdf_to_word(pdf_file, word_file):
@@ -9,16 +9,17 @@ def pdf_to_word(pdf_file, word_file):
         return
     
     # Initialize the PDF reader
-    pdf_reader = PyPDF2.PdfFileReader(pdf_file)
+    pdf_reader = PdfReader(pdf_file)
 
     # Initialize the Word document
     doc = Document()
 
     # Iterate through the PDF pages and extract text
-    for page_num in range(pdf_reader.numPages):
-        page = pdf_reader.getPage(page_num)
-        text = page.extractText()
-        doc.add_paragraph(text)
+    for page_num in range(len(pdf_reader.pages)):
+        page = pdf_reader.pages[page_num]
+        text = page.extract_text()
+        clean_text = text.encode("ascii", "ignore").decode("ascii")  # Convert to compatible format
+        doc.add_paragraph(clean_text)
 
     # Save the Word document
     doc.save(word_file)
@@ -26,7 +27,7 @@ def pdf_to_word(pdf_file, word_file):
 
 if __name__ == "__main__":
     # Replace 'input_file.pdf' with the name of your PDF file
-    input_pdf = "input_file.pdf"
+    input_pdf = "1.pdf"
 
     # Replace 'output_file.docx' with the desired name of the output Word file
     output_word = "output_file.docx"
